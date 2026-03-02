@@ -1,0 +1,12 @@
+model ProductSpec {
+    id        String  @id @default(uuid())
+    key       String
+    value     String
+
+    productId String
+    product   Product @relation(fields: [productId], references: [id])
+
+    @@index([key])
+
+    @@map("products-specs")
+}
