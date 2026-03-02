@@ -8,6 +8,8 @@ import fastifyCsrf from '@fastify/csrf-protection';
 import helmet from '@fastify/helmet';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { LoggerService } from './core/logger/logger.service';
+import { StandardResponseInterceptor } from './common/interceptors/standard-response.interceptor';
+import { HttpExceptionFilter, PrismaExceptionFilter } from '@common/filters';
 
 async function bootstrap() {
     const logger = new LoggerService();
@@ -36,8 +38,10 @@ async function bootstrap() {
             excludeExtraneousValues: true,
             enableImplicitConversion: true,
         }),
-        // new StandardResponseInterceptor(),
+        new StandardResponseInterceptor(),
     );
+
+    app.useGlobalFilters(new HttpExceptionFilter(), new PrismaExceptionFilter());
 
     app.useGlobalPipes(
         new ValidationPipe({
