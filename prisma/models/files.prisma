@@ -1,0 +1,18 @@
+model Files {
+    id        String  @id @default(uuid())
+    url       String
+
+    targetType FileTargetType
+    targetId String
+
+    createdAt  DateTime @default(now())
+
+    @@index([targetId, targetType])
+
+    @@map("files")
+}
+
+enum FileTargetType {
+    PRODUCT
+    CATEGORY
+}
