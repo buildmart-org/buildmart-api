@@ -1,0 +1,21 @@
+model Deal {
+    id          String   @id @default(uuid())
+    title       String
+    description String
+    bannerTitle String
+    bannerText  String
+
+    discount Float
+
+    startsAt   DateTime
+    endsAt     DateTime
+
+    isActive   Boolean  @default(true)
+
+    products   ProductDeal[]
+
+    @@index([isActive, startsAt, endsAt])
+
+    @@map("deals")
+}
+
