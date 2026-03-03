@@ -4,7 +4,7 @@ import { FileTargetType } from '@prisma/client';
 import { Expose } from 'class-transformer';
 import { IsEnum } from 'class-validator';
 
-export class FileDetailsDto {
+export class FileListDto {
     @ApiProperty()
     @Expose()
     id!: string;
@@ -26,18 +26,20 @@ export class FileDetailsDto {
     @Expose()
     createdAt!: Date;
 
-    constructor(partial: Partial<FileDetailsDto>) {
+    constructor(partial: Partial<FileListDto>) {
         Object.assign(this, partial);
     }
 
-    static from(entity: FileSelectType | null): FileDetailsDto {
-        if (!entity) return new FileDetailsDto({});
-        return new FileDetailsDto({
-            id: entity.id,
-            url: entity.url,
-            targetType: entity.targetType,
-            targetId: entity.targetId,
-            createdAt: entity.createdAt,
-        });
+    static fromEntity(entity: FileSelectType[]): FileListDto[] {
+        return entity.map(
+            (entity) =>
+                new FileListDto({
+                    id: entity.id,
+                    url: entity.url,
+                    targetType: entity.targetType,
+                    targetId: entity.targetId,
+                    createdAt: entity.createdAt,
+                }),
+        );
     }
 }
