@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 
-export const FILE_DETAILS_SELECT = Prisma.validator<Prisma.FilesSelect>()({
+export const FILE_SELECT = Prisma.validator<Prisma.FilesSelect>()({
     id: true,
     url: true,
     targetId: true,
@@ -9,5 +9,5 @@ export const FILE_DETAILS_SELECT = Prisma.validator<Prisma.FilesSelect>()({
 });
 
 export type FileSelectType = Prisma.FilesGetPayload<{
-    select: typeof FILE_DETAILS_SELECT;
+    select: typeof FILE_SELECT;
 }>;
