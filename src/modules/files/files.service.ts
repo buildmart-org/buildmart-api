@@ -29,7 +29,7 @@ export class FilesService {
     async getEntitiesFiles(
         targetsIds: string[],
         targetType: FileTargetType,
-    ): Promise<FileListDto[]> {
+    ): Promise<Map<string, FileListDto>> {
         this.loggerService.log('Getting entities files');
 
         const files = await this.prismaService.files.findMany({
@@ -42,6 +42,19 @@ export class FilesService {
             },
         });
 
-        return FileListDto.fromEntity(files);
+        const filesDto = FileListDto.fromEntity(files);
+        const grouped = this.groupFilesByTargetId(filesDto);
+
+        return grouped;
+    }
+
+    private groupFilesByTargetId(files: FileListDto[]): Map<string, FileListDto> {
+        const filesByTargetId = new Map<string, FileListDto>();
+
+        for (const file of files) {
+            filesByTargetId.set(file.targetId, file);
+        }
+
+        return filesByTargetId;
     }
 }
