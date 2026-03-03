@@ -1,5 +1,5 @@
 model Deal {
-    id          String   @id @default(uuid())
+    id          String   @id @default(uuid()) @db.Uuid
     title       String
     description String
     bannerTitle String

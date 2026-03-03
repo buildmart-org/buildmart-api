@@ -1,82 +1,12 @@
-/*
-  Warnings:
+-- CreateEnum
+CREATE TYPE "FileTargetType" AS ENUM ('PRODUCT', 'CATEGORY');
 
-  - You are about to drop the `Category` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Deal` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Files` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Order` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `OrderItem` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `Product` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `ProductAttribute` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `ProductCategory` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `ProductDeal` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `ProductSpec` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `User` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropForeignKey
-ALTER TABLE "Order" DROP CONSTRAINT "Order_userId_fkey";
-
--- DropForeignKey
-ALTER TABLE "OrderItem" DROP CONSTRAINT "OrderItem_orderId_fkey";
-
--- DropForeignKey
-ALTER TABLE "OrderItem" DROP CONSTRAINT "OrderItem_productId_fkey";
-
--- DropForeignKey
-ALTER TABLE "ProductAttribute" DROP CONSTRAINT "ProductAttribute_productId_fkey";
-
--- DropForeignKey
-ALTER TABLE "ProductCategory" DROP CONSTRAINT "ProductCategory_categoryId_fkey";
-
--- DropForeignKey
-ALTER TABLE "ProductCategory" DROP CONSTRAINT "ProductCategory_productId_fkey";
-
--- DropForeignKey
-ALTER TABLE "ProductDeal" DROP CONSTRAINT "ProductDeal_dealId_fkey";
-
--- DropForeignKey
-ALTER TABLE "ProductDeal" DROP CONSTRAINT "ProductDeal_productId_fkey";
-
--- DropForeignKey
-ALTER TABLE "ProductSpec" DROP CONSTRAINT "ProductSpec_productId_fkey";
-
--- DropTable
-DROP TABLE "Category";
-
--- DropTable
-DROP TABLE "Deal";
-
--- DropTable
-DROP TABLE "Files";
-
--- DropTable
-DROP TABLE "Order";
-
--- DropTable
-DROP TABLE "OrderItem";
-
--- DropTable
-DROP TABLE "Product";
-
--- DropTable
-DROP TABLE "ProductAttribute";
-
--- DropTable
-DROP TABLE "ProductCategory";
-
--- DropTable
-DROP TABLE "ProductDeal";
-
--- DropTable
-DROP TABLE "ProductSpec";
-
--- DropTable
-DROP TABLE "User";
+-- CreateEnum
+CREATE TYPE "OrderStatus" AS ENUM ('PENDING', 'PAID', 'CANCELLED', 'COMPLETED');
 
 -- CreateTable
 CREATE TABLE "categories" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "title" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
 
@@ -85,7 +15,7 @@ CREATE TABLE "categories" (
 
 -- CreateTable
 CREATE TABLE "deals" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "bannerTitle" TEXT NOT NULL,
@@ -100,10 +30,10 @@ CREATE TABLE "deals" (
 
 -- CreateTable
 CREATE TABLE "files" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "url" TEXT NOT NULL,
     "targetType" "FileTargetType" NOT NULL,
-    "targetId" TEXT NOT NULL,
+    "targetId" UUID NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "files_pkey" PRIMARY KEY ("id")
@@ -111,9 +41,9 @@ CREATE TABLE "files" (
 
 -- CreateTable
 CREATE TABLE "orders-items" (
-    "id" TEXT NOT NULL,
-    "orderId" TEXT NOT NULL,
-    "productId" TEXT NOT NULL,
+    "id" UUID NOT NULL,
+    "orderId" UUID NOT NULL,
+    "productId" UUID NOT NULL,
     "quantity" INTEGER NOT NULL,
     "price" DECIMAL(10,2) NOT NULL,
 
@@ -122,8 +52,8 @@ CREATE TABLE "orders-items" (
 
 -- CreateTable
 CREATE TABLE "orders" (
-    "id" TEXT NOT NULL,
-    "userId" TEXT,
+    "id" UUID NOT NULL,
+    "userId" UUID,
     "status" "OrderStatus" NOT NULL DEFAULT 'PENDING',
     "subtotal" DECIMAL(10,2) NOT NULL,
     "tax" DECIMAL(10,2) NOT NULL,
@@ -135,43 +65,43 @@ CREATE TABLE "orders" (
 
 -- CreateTable
 CREATE TABLE "products-attributes" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "key" TEXT NOT NULL,
     "value" TEXT NOT NULL,
-    "productId" TEXT NOT NULL,
+    "productId" UUID NOT NULL,
 
     CONSTRAINT "products-attributes_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "products-categories" (
-    "productId" TEXT NOT NULL,
-    "categoryId" TEXT NOT NULL,
+    "productId" UUID NOT NULL,
+    "categoryId" UUID NOT NULL,
 
     CONSTRAINT "products-categories_pkey" PRIMARY KEY ("productId","categoryId")
 );
 
 -- CreateTable
 CREATE TABLE "products-deals" (
-    "productId" TEXT NOT NULL,
-    "dealId" TEXT NOT NULL,
+    "productId" UUID NOT NULL,
+    "dealId" UUID NOT NULL,
 
     CONSTRAINT "products-deals_pkey" PRIMARY KEY ("productId","dealId")
 );
 
 -- CreateTable
 CREATE TABLE "products-specs" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "key" TEXT NOT NULL,
     "value" TEXT NOT NULL,
-    "productId" TEXT NOT NULL,
+    "productId" UUID NOT NULL,
 
     CONSTRAINT "products-specs_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "products" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "price" DECIMAL(10,2) NOT NULL,
@@ -184,7 +114,7 @@ CREATE TABLE "products" (
 
 -- CreateTable
 CREATE TABLE "users" (
-    "id" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "email" TEXT NOT NULL,
     "name" TEXT,
 

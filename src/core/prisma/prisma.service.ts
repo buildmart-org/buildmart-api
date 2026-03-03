@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import { ConfigService } from 'src/core/config/config.service';
 
 @Injectable()
-export class DatabaseService extends PrismaClient {
+export class PrismaService extends PrismaClient {
     constructor(configService: ConfigService) {
         const db = configService.get('DB');
 
