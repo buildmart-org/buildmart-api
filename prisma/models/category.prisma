@@ -3,7 +3,7 @@ model Category {
     title     String
     slug      String   @unique
 
-    products  ProductCategory[]
-    
+    products  Product[]
+
     @@map("categories")
 }
