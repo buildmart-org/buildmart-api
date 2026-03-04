@@ -7,6 +7,13 @@ import { DealsModule } from './deals/deals.module';
 import { SystemSettingsModule } from './system-settings/system-settings.module';
 
 @Module({
-    imports: [HealthcheckModule, FilesModule, CategoriesModule, ProductsModule, DealsModule, SystemSettingsModule],
+    imports: [
+        HealthcheckModule,
+        FilesModule,
+        CategoriesModule,
+        ProductsModule,
+        DealsModule,
+        SystemSettingsModule,
+    ],
 })
 export class ModulesModule {}

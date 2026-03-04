@@ -34,4 +34,16 @@ export class ProductsController {
     async findById(@Param('id', ParseUUIDPipe) id: string): Promise<ProductDetailsDto> {
         return await this.productsService.findById(id);
     }
+
+    @Get(':id/related')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Related products' })
+    @ApiResponse({
+        status: HttpStatus.OK,
+        description: 'Found related products by product id',
+        type: [ProductDetailsDto],
+    })
+    async findRelated(@Param('id', ParseUUIDPipe) id: string) {
+        return await this.productsService.findRelated(id);
+    }
 }
