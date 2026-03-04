@@ -82,6 +82,10 @@ export class ProductsService {
             where.categoryId = query.category;
         }
 
+        if (query.ids && query.ids.length > 0) {
+            where.id = { in: query.ids };
+        }
+
         if (query.priceFrom !== undefined || query.priceTo !== undefined) {
             where.price = {};
             if (query.priceFrom !== undefined) where.price.gte = query.priceFrom;
