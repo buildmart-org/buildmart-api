@@ -18,6 +18,10 @@ model Product {
     deals       Deal[]
     orderItems  OrderItem[]
 
+    relatedProducts Product[] @relation("RelatedProducts")
+    relatedTo       Product[] @relation("RelatedProducts")
+
+
     @@index([price])
     @@index([rating])
 

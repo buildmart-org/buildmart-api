@@ -3,7 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { ProductListQueryDto } from './dto/requests/product-list-query.dto';
 import { PrismaService } from '@core/prisma/prisma.service';
 import { LoggerService } from '@core/logger/logger.service';
-import { PRODUCT_DETAILS_SELECT, PRODUCT_LIST_SELECT } from './selects';
+import {
+    PRODUCT_DETAILS_SELECT,
+    PRODUCT_LIST_SELECT,
+    PRODUCT_RELATED_LIST_SELECT,
+} from './selects';
 import { FileTargetType, Prisma } from '@prisma/client';
 import { FilesService } from '@modules/files/files.service';
 import { ProductDetailsDto, ProductListDto } from './dto';
@@ -118,5 +122,32 @@ export class ProductsService {
         const files = await this.filesService.getEntityFile(product.id, FileTargetType.PRODUCT);
 
         return ProductDetailsDto.fromEntity(product, files);
+    }
+
+    async findRelated(id: string): Promise<ProductListDto[]> {
+        this.loggerService.log(`Find related products`);
+
+        const product = await this.prismaService.product.findFirst({
+            select: PRODUCT_RELATED_LIST_SELECT,
+            where: { id },
+        });
+
+        if (!product) {
+            throw new NotFoundException('Product not found');
+        }
+
+        const related = product.relatedProducts;
+
+        if (related.length === 0) {
+            return [];
+        }
+
+        const files = await this.filesService.getEntitiesFiles(
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+            related.map((item) => item.id) as string[],
+            FileTargetType.PRODUCT,
+        );
+
+        return ProductListDto.fromEntity(related, files);
     }
 }
