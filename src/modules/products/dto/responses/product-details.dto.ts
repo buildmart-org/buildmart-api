@@ -24,6 +24,10 @@ export class ProductDetailsDto {
     @Expose()
     price!: number;
 
+    @ApiProperty()
+    @Expose()
+    priceOld!: number | null;
+
     @ApiPropertyOptional()
     @Expose()
     rating!: number | null;
@@ -55,6 +59,7 @@ export class ProductDetailsDto {
             title: entity.title,
             description: toNullable(entity.description),
             price: decimalToNumber(entity.price),
+            priceOld: entity.priceOld && decimalToNumber(entity.priceOld),
             rating: toNullable(entity.rating),
             category: new ProductListCategoryDto({
                 id: entity.category.id,
