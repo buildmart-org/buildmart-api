@@ -41,7 +41,7 @@ async function bootstrap() {
         new StandardResponseInterceptor(),
     );
 
-    app.useGlobalFilters(new HttpExceptionFilter(), new PrismaExceptionFilter());
+    app.useGlobalFilters(new HttpExceptionFilter(logger), new PrismaExceptionFilter());
 
     app.useGlobalPipes(
         new ValidationPipe({

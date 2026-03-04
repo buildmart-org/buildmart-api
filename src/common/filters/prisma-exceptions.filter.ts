@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import { EntityLinkedException } from './exceptions/entity-linked.exception';
 import { AppException } from './exceptions/app.exception';
 import { NotFoundException } from './exceptions/not-found.exception';
+import { ColumnNotExistsException } from './exceptions/column-not-exists.exceptions';
 
 @Catch(
     Prisma.PrismaClientKnownRequestError,
@@ -14,17 +15,21 @@ export class PrismaExceptionFilter implements ExceptionFilter {
         // Обработка известных ошибок Prisma
         if (exception instanceof Prisma.PrismaClientKnownRequestError) {
             switch (exception.code) {
+                // Нарушение уникальности
+                case 'P2002':
+                    throw new AppException(HttpStatus.CONFLICT, 'Record already exists');
+
                 // Ошибка внешнего ключа
                 case 'P2003':
                     throw new EntityLinkedException();
 
+                // Колонка не существует
+                case 'P2022':
+                    throw new ColumnNotExistsException();
+
                 // Запись не найдена
                 case 'P2025':
                     throw new NotFoundException();
-
-                // Нарушение уникальности
-                case 'P2002':
-                    throw new AppException(HttpStatus.CONFLICT, 'Record already exists');
 
                 default:
                     throw new AppException(

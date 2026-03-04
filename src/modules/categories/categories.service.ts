@@ -2,7 +2,7 @@ import { LoggerService } from '@core/logger/logger.service';
 import { PrismaService } from '@core/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { FileTargetType } from '@prisma/client';
-import { CATEGORIES_SELECT } from './selects';
+import { CATEGORY_LIST_SELECT } from './selects';
 import { CategoryListDto } from './dto/responses/category-list.dto';
 import { FilesService } from '@modules/files/files.service';
 
@@ -18,7 +18,7 @@ export class CategoriesService {
         this.loggerService.log(`Find all categories`);
 
         const categories = await this.prismaService.category.findMany({
-            select: CATEGORIES_SELECT,
+            select: CATEGORY_LIST_SELECT,
         });
 
         const files = await this.filesService.getEntitiesFiles(
