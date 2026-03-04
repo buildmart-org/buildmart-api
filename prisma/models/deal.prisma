@@ -5,16 +5,13 @@ model Deal {
     bannerTitle String
     bannerText  String
 
-    discount Float
-
-    startsAt   DateTime
     endsAt     DateTime
 
     isActive   Boolean  @default(true)
 
-    products   ProductDeal[]
+    products   Product[]
 
-    @@index([isActive, startsAt, endsAt])
+    @@index([isActive])
 
     @@map("deals")
 }
