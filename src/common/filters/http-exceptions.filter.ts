@@ -1,4 +1,5 @@
 import { ErrorResponseDto } from '@common/dto';
+import { LoggerService } from '@core/logger/logger.service';
 import { Catch, ExceptionFilter, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
 
@@ -16,6 +17,7 @@ type CombinedResponse = NestErrorResponse & AppErrorResponse;
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter<HttpException> {
+    constructor(private readonly loggerService: LoggerService) {}
     catch(exception: HttpException, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
         const reply = ctx.getResponse<FastifyReply>();
@@ -38,6 +40,14 @@ export class HttpExceptionFilter implements ExceptionFilter<HttpException> {
         } else if (typeof responseBody === 'string') {
             detail = responseBody;
         }
+
+        this.loggerService.error(
+            {
+                message: exception.message,
+                detail: detail,
+            },
+            HttpException.name,
+        );
 
         reply.status(status).send(
             ErrorResponseDto.from({
