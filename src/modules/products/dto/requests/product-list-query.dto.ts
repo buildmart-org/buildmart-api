@@ -11,7 +11,7 @@ export class ProductListQueryDto extends PaginationQueryDto {
     })
     @IsOptional()
     @IsString()
-    @Matches(/^(price):(asc|desc)$/i, {
+    @Matches(/^(price|title):(asc|desc)$/i, {
         message:
             'sort должен быть в формате field:direction, где field - price, direction - asc или desc',
     })
@@ -41,6 +41,18 @@ export class ProductListQueryDto extends PaginationQueryDto {
     @IsNumber()
     priceTo?: number;
 
+    @ApiPropertyOptional({
+        description: 'Поиск по названию',
+    })
+    @IsOptional()
+    @IsString()
     search?: string;
-    rating?: string;
+
+    @ApiPropertyOptional({
+        description: 'Фильтр по рейтингу',
+    })
+    @IsOptional()
+    @Type(() => Number)
+    @IsNumber()
+    rating?: number;
 }

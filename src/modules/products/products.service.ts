@@ -8,6 +8,7 @@ import { FileTargetType, Prisma } from '@prisma/client';
 import { FilesService } from '@modules/files/files.service';
 import { ProductDetailsDto, ProductListDto } from './dto';
 import { NotFoundException } from '@common/filters';
+import { PaginationMetaDto } from '@common/dto';
 
 @Injectable()
 export class ProductsService {
@@ -17,36 +18,50 @@ export class ProductsService {
         private readonly filesService: FilesService,
     ) {}
 
-    async findAll(query?: ProductListQueryDto): Promise<ProductListDto[]> {
+    async findAll(
+        query?: ProductListQueryDto,
+    ): Promise<{ data: ProductListDto[]; meta: PaginationMetaDto }> {
         this.loggerService.log(`Find all products`);
 
-        const { skip, take } = this.resolvePagination(query);
+        const { skip, take, page, limit } = this.resolvePagination(query);
         const orderBy = this.resolveSorting(query?.sort);
         const where = this.resolveFilters(query);
 
-        const products = await this.prismaService.product.findMany({
-            select: PRODUCT_LIST_SELECT,
-            where,
-            skip,
-            take,
-            orderBy,
-        });
+        const [products, total] = await this.prismaService.$transaction([
+            this.prismaService.product.findMany({
+                select: PRODUCT_LIST_SELECT,
+                where,
+                skip,
+                take,
+                orderBy,
+            }),
+            this.prismaService.product.count({ where }),
+        ]);
 
         const files = await this.filesService.getEntitiesFiles(
             products.map((item) => item.id),
             FileTargetType.PRODUCT,
         );
 
-        return ProductListDto.fromEntity(products, files);
+        const data = ProductListDto.fromEntity(products, files);
+
+        const meta = PaginationMetaDto.from({
+            limit,
+            currentPage: page,
+            lastPage: Math.ceil(total / limit),
+            total,
+        });
+
+        return { data, meta };
     }
 
     private resolvePagination(query?: ProductListQueryDto) {
         const page = query?.page ?? 1;
         const limit = query?.limit ?? 20;
         const skip = (page - 1) * limit;
-        return { skip, take: limit };
-    }
 
+        return { skip, take: limit, page, limit };
+    }
     private resolveSorting(sort?: string): Prisma.ProductOrderByWithRelationInput {
         if (!sort) return { createdAt: 'desc' };
 
@@ -78,8 +93,7 @@ export class ProductsService {
         }
 
         if (query.rating) {
-            const rating = parseFloat(query.rating);
-            if (!isNaN(rating)) where.rating = rating;
+            if (!isNaN(query.rating)) where.rating = query.rating;
         }
 
         return where;
