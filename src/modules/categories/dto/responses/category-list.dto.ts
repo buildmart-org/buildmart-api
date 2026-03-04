@@ -23,7 +23,7 @@ export class CategoryListDto {
 
     @ApiPropertyOptional()
     @Expose()
-    image!: string | null;
+    file!: string | null;
 
     constructor(partial: Partial<CategoryListDto>) {
         Object.assign(this, partial);
@@ -40,7 +40,7 @@ export class CategoryListDto {
                     title: item.title,
                     slug: item.slug,
                     productCount: item._count.products,
-                    image: toNullable(files.get(item.id)?.url),
+                    file: toNullable(files.get(item.id)?.url),
                 }),
         );
     }
