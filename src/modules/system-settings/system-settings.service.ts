@@ -3,7 +3,6 @@ import { SystemSettingDto } from './dto';
 import { LoggerService } from '@core/logger/logger.service';
 import { PrismaService } from '@core/prisma/prisma.service';
 import { SYSTEM_SETTING_SELECT } from './selects';
-import { NotFoundException } from '@common/filters';
 
 @Injectable()
 export class SystemSettingsService {
