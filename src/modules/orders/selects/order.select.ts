@@ -28,8 +28,8 @@ export type OrderDetailsSelectType = Prisma.OrderGetPayload<{
 export const ORDER_PROMO_SELECT = Prisma.validator<Prisma.OrderPromoSelect>()({
     id: true,
     code: true,
-    discountValue: true,
-    active: true,
+    discount: true,
+    isActive: true,
     createdAt: true,
 });
 

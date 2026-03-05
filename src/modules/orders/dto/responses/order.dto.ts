@@ -99,11 +99,11 @@ export class OrderPromoDto {
 
     @ApiProperty()
     @Expose()
-    discountValue!: number;
+    discount!: number;
 
     @ApiProperty()
     @Expose()
-    active!: boolean;
+    isActive!: boolean;
 
     @ApiProperty()
     @Expose()
@@ -117,8 +117,8 @@ export class OrderPromoDto {
         return new OrderPromoDto({
             id: entity.id,
             code: entity.code,
-            discountValue: decimalToNumber(entity.discountValue),
-            active: entity.active,
+            discount: decimalToNumber(entity.discount),
+            isActive: entity.isActive,
             createdAt: entity.createdAt,
         });
     }

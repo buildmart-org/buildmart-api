@@ -22,8 +22,8 @@ export class OrdersService {
             where: { key: 'tax' },
         });
 
-        if (!systemTax || typeof systemTax.value !== 'number')
-            throw new BadRequestException('Tax not set. Contact admin.');
+        console.log(systemTax);
+        if (!systemTax) throw new BadRequestException('Tax not set. Contact admin.');
 
         const tax = subtotal * Number(systemTax.value);
 
@@ -32,7 +32,7 @@ export class OrdersService {
 
         if (dto.code) {
             const promo = await this.applyPromo(dto.code);
-            discount = subtotal * (Number(promo.discountValue) / 100);
+            discount = subtotal * (Number(promo.discount) / 100);
             promoId = promo.id;
         }
 
@@ -61,7 +61,7 @@ export class OrdersService {
         this.loggerService.log(`Applying promo code ${code}`);
 
         const promo = await this.prismaService.orderPromo.findFirst({
-            where: { code, active: true },
+            where: { code, isActive: true },
             select: ORDER_PROMO_SELECT,
         });
 
