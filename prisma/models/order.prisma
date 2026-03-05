@@ -1,15 +1,21 @@
 model Order {
     id          String   @id @default(uuid()) @db.Uuid
-    userId      String?  @db.Uuid
 
-    status      OrderStatus @default(PENDING)
+    userId      String?  @db.Uuid
+    user        User?    @relation(fields: [userId], references: [id])
+    email       String?
+
     subtotal    Decimal  @db.Decimal(10,2)
     tax         Decimal  @db.Decimal(10,2)
+    discount    Decimal  @db.Decimal(10,2) @default(0)
     total       Decimal  @db.Decimal(10,2)
 
+    status      OrderStatus @default(PENDING)
     createdAt   DateTime @default(now())
 
-    user        User?    @relation(fields: [userId], references: [id])
+    promoId     String?  @db.Uuid
+    promo       OrderPromo? @relation(fields: [promoId], references: [id])
+
     items       OrderItem[]
 
     @@map("orders")
