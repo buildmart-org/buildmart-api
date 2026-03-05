@@ -3,6 +3,8 @@ model Product {
     title       String
     description String
     price       Decimal  @db.Decimal(10,2)
+    priceOld    Decimal?  @db.Decimal(10,2)
+
     rating      Float    @default(0)
 
     createdAt   DateTime @default(now())
@@ -13,8 +15,12 @@ model Product {
 
     attributes  ProductAttribute[]
     specs       ProductSpec[]
-    dealLinks   ProductDeal[]
+    deals       Deal[]
     orderItems  OrderItem[]
+
+    relatedProducts Product[] @relation("RelatedProducts")
+    relatedTo       Product[] @relation("RelatedProducts")
+
 
     @@index([price])
     @@index([rating])

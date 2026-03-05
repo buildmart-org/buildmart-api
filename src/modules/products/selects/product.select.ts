@@ -35,21 +35,9 @@ export const PRODUCT_LIST_SELECT = Prisma.validator<Prisma.ProductSelect>()({
     title: true,
     description: true,
     price: true,
+    priceOld: true,
     rating: true,
     category: { select: PRODUCT_LIST_CATEGORY_DETAILS_SELECT },
-    createdAt: true,
-    updatedAt: true,
-});
-
-export const PRODUCT_DETAILS_SELECT = Prisma.validator<Prisma.ProductSelect>()({
-    id: true,
-    title: true,
-    description: true,
-    price: true,
-    rating: true,
-    category: { select: PRODUCT_LIST_CATEGORY_DETAILS_SELECT },
-    attributes: { select: PRODUCT_ATTRIBUTES_SELECT },
-    specs: { select: PRODUCT_SPECS_SELECT },
     createdAt: true,
     updatedAt: true,
 });
@@ -57,6 +45,37 @@ export const PRODUCT_DETAILS_SELECT = Prisma.validator<Prisma.ProductSelect>()({
 export type ProductListSelectType = Prisma.ProductGetPayload<{
     select: typeof PRODUCT_LIST_SELECT;
 }>;
+
+export const PRODUCT_RELATED_LIST_SELECT = Prisma.validator<Prisma.ProductSelect>()({
+    id: true,
+    title: true,
+    description: true,
+    price: true,
+    priceOld: true,
+    rating: true,
+    category: { select: PRODUCT_LIST_CATEGORY_DETAILS_SELECT },
+    relatedProducts: { select: PRODUCT_LIST_SELECT },
+    createdAt: true,
+    updatedAt: true,
+});
+
+export type ProductRelatedListSelectType = Prisma.ProductGetPayload<{
+    select: typeof PRODUCT_RELATED_LIST_SELECT;
+}>;
+
+export const PRODUCT_DETAILS_SELECT = Prisma.validator<Prisma.ProductSelect>()({
+    id: true,
+    title: true,
+    description: true,
+    price: true,
+    priceOld: true,
+    rating: true,
+    category: { select: PRODUCT_LIST_CATEGORY_DETAILS_SELECT },
+    attributes: { select: PRODUCT_ATTRIBUTES_SELECT },
+    specs: { select: PRODUCT_SPECS_SELECT },
+    createdAt: true,
+    updatedAt: true,
+});
 
 export type ProductDetailsSelectType = Prisma.ProductGetPayload<{
     select: typeof PRODUCT_DETAILS_SELECT;

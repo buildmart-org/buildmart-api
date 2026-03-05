@@ -1,7 +1,7 @@
 import { PaginationQueryDto } from '@common/dto';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsNumber, IsOptional, IsString, IsUUID, Matches } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import { IsArray, IsNumber, IsOptional, IsString, IsUUID, Matches } from 'class-validator';
 
 export class ProductListQueryDto extends PaginationQueryDto {
     @ApiPropertyOptional({
@@ -11,7 +11,7 @@ export class ProductListQueryDto extends PaginationQueryDto {
     })
     @IsOptional()
     @IsString()
-    @Matches(/^(price):(asc|desc)$/i, {
+    @Matches(/^(price|title):(asc|desc)$/i, {
         message:
             'sort должен быть в формате field:direction, где field - price, direction - asc или desc',
     })
@@ -24,6 +24,25 @@ export class ProductListQueryDto extends PaginationQueryDto {
     @IsOptional()
     @IsUUID()
     category?: string;
+
+    @ApiPropertyOptional({
+        description: 'Список ID товаров',
+        example: ['a1b2c3d4-1234-5678-9012-abcdefabcdef', 'a1b2c3d4-1234-5678-9012-abcdefabcdex'],
+        type: [String],
+    })
+    @Transform(({ value }): string[] | undefined => {
+        if (value === undefined || value === null) {
+            return undefined;
+        }
+        if (Array.isArray(value)) {
+            return value.map(String);
+        }
+        return [String(value)];
+    })
+    @IsOptional()
+    @IsArray()
+    @IsUUID('4', { each: true })
+    ids?: string[];
 
     @ApiPropertyOptional({
         description: 'Фильтр по цене (От)',
@@ -41,6 +60,18 @@ export class ProductListQueryDto extends PaginationQueryDto {
     @IsNumber()
     priceTo?: number;
 
+    @ApiPropertyOptional({
+        description: 'Поиск по названию',
+    })
+    @IsOptional()
+    @IsString()
     search?: string;
-    rating?: string;
+
+    @ApiPropertyOptional({
+        description: 'Фильтр по рейтингу',
+    })
+    @IsOptional()
+    @Type(() => Number)
+    @IsNumber()
+    rating?: number;
 }
