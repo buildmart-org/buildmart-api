@@ -5,6 +5,7 @@ export const FILE_SELECT = Prisma.validator<Prisma.FilesSelect>()({
     url: true,
     targetId: true,
     targetType: true,
+    isPrimary: true,
     createdAt: true,
 });
 

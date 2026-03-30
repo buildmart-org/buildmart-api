@@ -119,7 +119,7 @@ export class ProductsService {
             throw new NotFoundException('Product not found');
         }
 
-        const files = await this.filesService.getEntityFile(product.id, FileTargetType.PRODUCT);
+        const files = await this.filesService.getEntityFiles(product.id, FileTargetType.PRODUCT);
 
         return ProductDetailsDto.fromEntity(product, files);
     }
