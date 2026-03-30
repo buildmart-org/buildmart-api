@@ -24,6 +24,10 @@ export class FileDetailsDto {
 
     @ApiProperty()
     @Expose()
+    isPrimary!: boolean;
+
+    @ApiProperty()
+    @Expose()
     createdAt!: Date;
 
     constructor(partial: Partial<FileDetailsDto>) {
@@ -37,6 +41,7 @@ export class FileDetailsDto {
             url: entity.url,
             targetType: entity.targetType,
             targetId: entity.targetId,
+            isPrimary: entity.isPrimary,
             createdAt: entity.createdAt,
         });
     }

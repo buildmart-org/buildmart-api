@@ -38,7 +38,7 @@ export class ProductListDto {
 
     @ApiPropertyOptional()
     @Expose()
-    file!: string | null;
+    files!: FileListDto[];
 
     constructor(partial: Partial<ProductListDto>) {
         Object.assign(this, partial);
@@ -46,24 +46,25 @@ export class ProductListDto {
 
     static fromEntity(
         entities: ProductListSelectType[],
-        files: Map<string, FileListDto>,
+        filesMap: Map<string, FileListDto[]>,
     ): ProductListDto[] {
-        return entities.map(
-            (item) =>
-                new ProductListDto({
-                    id: item.id,
-                    title: item.title,
-                    description: toNullable(item.description),
-                    price: decimalToNumber(item.price),
-                    priceOld: item.priceOld && decimalToNumber(item.priceOld),
-                    rating: item.rating,
-                    category: ProductListCategoryDto.fromEntity({
-                        id: item.category.id,
-                        title: item.category.title,
-                        slug: item.category.slug,
-                    }),
-                    file: toNullable(files.get(item.id)?.url),
+        return entities.map((item) => {
+            const files = filesMap.get(item.id) ?? [];
+
+            return new ProductListDto({
+                id: item.id,
+                title: item.title,
+                description: toNullable(item.description),
+                price: decimalToNumber(item.price),
+                priceOld: item.priceOld && decimalToNumber(item.priceOld),
+                rating: item.rating,
+                category: ProductListCategoryDto.fromEntity({
+                    id: item.category.id,
+                    title: item.category.title,
+                    slug: item.category.slug,
                 }),
-        );
+                files: files,
+            });
+        });
     }
 }

@@ -5,7 +5,7 @@ import { ProductDetailsSelectType } from '@modules/products/selects';
 import { toNullable } from '@common/utlities/to-nullable.util';
 import { ProductListCategoryDto } from './product-list-category.dto';
 import { decimalToNumber } from '@common/utlities';
-import { FileDetailsDto } from '@modules/files/dto';
+import { FileDetailsDto, FileListDto } from '@modules/files/dto';
 
 export class ProductDetailsDto {
     @ApiProperty()
@@ -47,13 +47,16 @@ export class ProductDetailsDto {
 
     @ApiPropertyOptional()
     @Expose()
-    file!: string | null;
+    files!: FileListDto[];
 
     constructor(partial: Partial<ProductDetailsDto>) {
         Object.assign(this, partial);
     }
 
-    static fromEntity(entity: ProductDetailsSelectType, file: FileDetailsDto): ProductDetailsDto {
+    static fromEntity(
+        entity: ProductDetailsSelectType,
+        files: FileDetailsDto[],
+    ): ProductDetailsDto {
         return new ProductDetailsDto({
             id: entity.id,
             title: entity.title,
@@ -68,7 +71,7 @@ export class ProductDetailsDto {
             }),
             attributes: toNullable(entity.attributes),
             specs: toNullable(entity.specs),
-            file: toNullable(file.url),
+            files: files,
         });
     }
 }
