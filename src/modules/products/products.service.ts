@@ -101,7 +101,7 @@ export class ProductsService {
         }
 
         if (query.rating) {
-            if (!isNaN(query.rating)) where.rating = query.rating;
+            if (!isNaN(query.rating)) where.rating = { gte: query.rating };
         }
 
         return where;
