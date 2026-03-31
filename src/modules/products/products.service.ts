@@ -107,7 +107,7 @@ export class ProductsService {
         return where;
     }
 
-    async findById(id: string): Promise<ProductDetailsDto> {
+    async findById(id: string): Promise<ProductDetailsDto | null> {
         this.loggerService.log(`Find product by id: ${id}`);
 
         const product = await this.prismaService.product.findUnique({
@@ -116,7 +116,7 @@ export class ProductsService {
         });
 
         if (!product) {
-            throw new NotFoundException('Product not found');
+            return null;
         }
 
         const files = await this.filesService.getEntityFiles(product.id, FileTargetType.PRODUCT);
