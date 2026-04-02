@@ -31,7 +31,7 @@ export class ProductsController {
         description: 'Found category by id',
         type: ProductDetailsDto,
     })
-    async findById(@Param('id', ParseUUIDPipe) id: string): Promise<ProductDetailsDto> {
+    async findById(@Param('id', ParseUUIDPipe) id: string): Promise<ProductDetailsDto | null> {
         return await this.productsService.findById(id);
     }
 

@@ -1,4 +1,3 @@
-import { toNullable } from '@common/utlities/to-nullable.util';
 import { CategoriesSelectType } from '@modules/categories/selects';
 import { FileListDto } from '@modules/files/dto';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -23,7 +22,7 @@ export class CategoryListDto {
 
     @ApiPropertyOptional()
     @Expose()
-    file!: string | null;
+    files!: FileListDto[];
 
     constructor(partial: Partial<CategoryListDto>) {
         Object.assign(this, partial);
@@ -31,17 +30,18 @@ export class CategoryListDto {
 
     static fromEntity(
         entity: CategoriesSelectType[],
-        files: Map<string, FileListDto>,
+        filesMap: Map<string, FileListDto[]>,
     ): CategoryListDto[] {
-        return entity.map(
-            (item) =>
-                new CategoryListDto({
-                    id: item.id,
-                    title: item.title,
-                    slug: item.slug,
-                    productCount: item._count.products,
-                    file: toNullable(files.get(item.id)?.url),
-                }),
-        );
+        return entity.map((item) => {
+            const files = filesMap.get(item.id) ?? [];
+
+            return new CategoryListDto({
+                id: item.id,
+                title: item.title,
+                slug: item.slug,
+                productCount: item._count.products,
+                files: files,
+            });
+        });
     }
 }

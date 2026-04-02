@@ -101,13 +101,13 @@ export class ProductsService {
         }
 
         if (query.rating) {
-            if (!isNaN(query.rating)) where.rating = query.rating;
+            if (!isNaN(query.rating)) where.rating = { gte: query.rating };
         }
 
         return where;
     }
 
-    async findById(id: string): Promise<ProductDetailsDto> {
+    async findById(id: string): Promise<ProductDetailsDto | null> {
         this.loggerService.log(`Find product by id: ${id}`);
 
         const product = await this.prismaService.product.findUnique({
@@ -116,10 +116,10 @@ export class ProductsService {
         });
 
         if (!product) {
-            throw new NotFoundException('Product not found');
+            return null;
         }
 
-        const files = await this.filesService.getEntityFile(product.id, FileTargetType.PRODUCT);
+        const files = await this.filesService.getEntityFiles(product.id, FileTargetType.PRODUCT);
 
         return ProductDetailsDto.fromEntity(product, files);
     }

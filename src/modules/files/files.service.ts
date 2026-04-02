@@ -12,24 +12,42 @@ export class FilesService {
         private readonly prismaService: PrismaService,
     ) {}
 
-    async getEntityFile(targetId: string, targetType: FileTargetType): Promise<FileDetailsDto> {
+    async getEntityFiles(targetId: string, targetType: FileTargetType): Promise<FileDetailsDto[]> {
         this.loggerService.log('Getting entity file');
 
-        const file = await this.prismaService.files.findFirst({
+        const files = await this.prismaService.files.findMany({
             select: FILE_SELECT,
             where: {
                 targetId: targetId,
                 targetType: targetType,
             },
+            orderBy: {
+                isPrimary: 'desc',
+            },
         });
 
-        return FileDetailsDto.fromEntity(file);
+        return FileListDto.fromEntity(files);
     }
+    //
+    // async getEntityFile(targetId: string, targetType: FileTargetType): Promise<FileDetailsDto> {
+    //     this.loggerService.log('Getting entity file');
+    //
+    //     const file = await this.prismaService.files.findFirst({
+    //         select: FILE_SELECT,
+    //         where: {
+    //             isPrimary: true,
+    //             targetId: targetId,
+    //             targetType: targetType,
+    //         },
+    //     });
+    //
+    //     return FileDetailsDto.fromEntity(file);
+    // }
 
     async getEntitiesFiles(
         targetsIds: string[],
         targetType: FileTargetType,
-    ): Promise<Map<string, FileListDto>> {
+    ): Promise<Map<string, FileListDto[]>> {
         this.loggerService.log('Getting entities files');
 
         const files = await this.prismaService.files.findMany({
@@ -40,21 +58,26 @@ export class FilesService {
                 },
                 targetType: targetType,
             },
+            orderBy: {
+                isPrimary: 'desc',
+            },
         });
 
         const filesDto = FileListDto.fromEntity(files);
-        const grouped = this.groupFilesByTargetId(filesDto);
 
-        return grouped;
+        return this.groupFilesByTargetId(filesDto);
     }
 
-    private groupFilesByTargetId(files: FileListDto[]): Map<string, FileListDto> {
-        const filesByTargetId = new Map<string, FileListDto>();
+    private groupFilesByTargetId(files: FileListDto[]): Map<string, FileListDto[]> {
+        const map = new Map<string, FileListDto[]>();
 
         for (const file of files) {
-            filesByTargetId.set(file.targetId, file);
+            const list = map.get(file.targetId) ?? [];
+
+            list.push(file);
+            map.set(file.targetId, list);
         }
 
-        return filesByTargetId;
+        return map;
     }
 }

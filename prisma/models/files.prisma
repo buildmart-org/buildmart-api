@@ -1,19 +1,20 @@
 model Files {
-    id        String  @id @default(uuid()) @db.Uuid
-    url       String
+  id  String @id @default(uuid()) @db.Uuid
+  url String
 
-    targetType FileTargetType
-    targetId String   @db.Uuid
+  targetType FileTargetType
+  targetId   String         @db.Uuid
 
-    createdAt  DateTime @default(now())
+  isPrimary Boolean @default(false)
 
-    @@index([targetId, targetType])
+  createdAt DateTime @default(now())
 
-    @@map("files")
+  @@index([targetId, targetType])
+  @@index([targetId, targetType, isPrimary])
+  @@map("files")
 }
 
 enum FileTargetType {
-    PRODUCT
-    CATEGORY
+  PRODUCT
+  CATEGORY
 }
-

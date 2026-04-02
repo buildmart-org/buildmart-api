@@ -32,7 +32,10 @@ export class DealListDto {
         Object.assign(this, partial);
     }
 
-    static fromEntity(entities: DealListSelect[], files: Map<string, FileListDto>): DealListDto[] {
+    static fromEntity(
+        entities: DealListSelect[],
+        files: Map<string, FileListDto[]>,
+    ): DealListDto[] {
         return entities.map((item) => {
             return new DealListDto({
                 id: item.id,
