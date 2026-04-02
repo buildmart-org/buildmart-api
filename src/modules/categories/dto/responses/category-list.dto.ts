@@ -1,4 +1,3 @@
-import { toNullable } from '@common/utlities/to-nullable.util';
 import { CategoriesSelectType } from '@modules/categories/selects';
 import { FileListDto } from '@modules/files/dto';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
