@@ -1,7 +1,8 @@
-import { Controller, Post, Body, Param, Get } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { CreateOrderDto } from './dto/requests/create-order.dto';
-import { OrderDto, OrderPromoDto } from './dto/responses/order.dto';
+
+import { ApplyPromocodeDto, CreateOrderDto } from '@modules/orders/dto/requests';
+import { OrderDto, PromocodeDto } from '@modules/orders/dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -12,8 +13,8 @@ export class OrdersController {
         return await this.ordersService.guestCreateOrder(dto);
     }
 
-    @Get('apply-promo/:code')
-    async applyPromo(@Param('code') code: string): Promise<OrderPromoDto> {
-        return await this.ordersService.applyPromo(code);
+    @Post('apply-promocode')
+    async applyPromo(@Body() dto: ApplyPromocodeDto): Promise<PromocodeDto> {
+        return await this.ordersService.applyPromocode(dto);
     }
 }

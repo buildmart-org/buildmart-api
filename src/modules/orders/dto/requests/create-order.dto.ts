@@ -26,7 +26,7 @@ export class CreateOrderDto {
     @IsArray()
     items!: CreateOrderItemDto[];
 
-    @ApiProperty({ description: 'Promo code if any', required: false })
+    @ApiProperty({ description: 'Promocode if provided', required: false })
     @IsOptional()
-    code?: string;
+    promocode?: string;
 }
