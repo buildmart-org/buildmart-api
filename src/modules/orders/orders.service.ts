@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@core/prisma/prisma.service';
 import { LoggerService } from '@core/logger/logger.service';
-import { CreateOrderDto } from './dto/requests/create-order.dto';
-import { OrderDto, OrderPromoDto } from './dto/responses/order.dto';
-import { ORDER_DETAILS_SELECT, ORDER_PROMO_SELECT } from './selects';
+
+import { ORDER_DETAILS_SELECT, ORDER_PROMO_SELECT, OrderPromoSelectType } from './selects';
 import { BadRequestException } from '@common/filters/exceptions/bad-request.exception';
+import { ApplyPromocodeDto, CreateOrderDto } from '@modules/orders/dto/requests';
+import { OrderDto, PromocodeDto } from '@modules/orders/dto';
 
 @Injectable()
 export class OrdersService {
@@ -22,7 +23,6 @@ export class OrdersService {
             where: { key: 'tax' },
         });
 
-        console.log(systemTax);
         if (!systemTax) throw new BadRequestException('Tax not set. Contact admin.');
 
         const tax = subtotal * Number(systemTax.value);
@@ -30,10 +30,13 @@ export class OrdersService {
         let discount = 0;
         let promoId: string | undefined;
 
-        if (dto.code) {
-            const promo = await this.applyPromo(dto.code);
-            discount = subtotal * (Number(promo.discount) / 100);
-            promoId = promo.id;
+        if (dto.promocode) {
+            const promo = await this.getPromocode(dto.promocode);
+
+            if (promo) {
+                discount = subtotal * (Number(promo.discount) / 100);
+                promoId = promo.id;
+            }
         }
 
         const total = subtotal + tax - discount;
@@ -57,17 +60,22 @@ export class OrdersService {
         return OrderDto.fromEntity(order);
     }
 
-    async applyPromo(code: string): Promise<OrderPromoDto> {
-        this.loggerService.log(`Applying promo code ${code}`);
+    async getPromocode(promocode: string): Promise<OrderPromoSelectType | null> {
+        this.loggerService.log(`Get promocode ${promocode}`);
 
-        const promo = await this.prismaService.orderPromo.findFirst({
-            where: { code, isActive: true },
+        return this.prismaService.orderPromo.findFirst({
+            where: { code: promocode, isActive: true },
             select: ORDER_PROMO_SELECT,
         });
+    }
 
+    async applyPromocode(dto: ApplyPromocodeDto): Promise<PromocodeDto> {
+        this.loggerService.log(`Applying promo code ${dto.promocode}`);
+
+        const promo = await this.getPromocode(dto.promocode);
         if (!promo) throw new BadRequestException('Invalid promo code. Contact admin');
 
-        return OrderPromoDto.fromEntity(promo);
+        return PromocodeDto.fromEntity(promo);
     }
 
     private async calculateOrderItems(dto: CreateOrderDto): Promise<{

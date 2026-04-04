@@ -1,9 +1,5 @@
 import { decimalToNumber } from '@common/utlities';
-import {
-    OrderDetailsSelectType,
-    OrderItemsListSelectType,
-    OrderPromoSelectType,
-} from '@modules/orders/selects';
+import { OrderDetailsSelectType, OrderItemsListSelectType } from '@modules/orders/selects';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Type } from 'class-transformer';
 
@@ -84,42 +80,6 @@ export class OrderDto {
             total: decimalToNumber(entity.total),
             status: entity.status,
             items: OrderItemListDto.fromEntity(entity.items),
-        });
-    }
-}
-
-export class OrderPromoDto {
-    @ApiProperty()
-    @Expose()
-    id!: string;
-
-    @ApiProperty()
-    @Expose()
-    code!: string;
-
-    @ApiProperty()
-    @Expose()
-    discount!: number;
-
-    @ApiProperty()
-    @Expose()
-    isActive!: boolean;
-
-    @ApiProperty()
-    @Expose()
-    createdAt?: Date;
-
-    constructor(partial: Partial<OrderPromoDto>) {
-        Object.assign(this, partial);
-    }
-
-    static fromEntity(entity: OrderPromoSelectType): OrderPromoDto {
-        return new OrderPromoDto({
-            id: entity.id,
-            code: entity.code,
-            discount: decimalToNumber(entity.discount),
-            isActive: entity.isActive,
-            createdAt: entity.createdAt,
         });
     }
 }
